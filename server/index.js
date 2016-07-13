@@ -2,7 +2,6 @@ import http from 'http';
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import db from './db';
 import middleware from './middleware';
 import api from './api';
 
@@ -18,18 +17,14 @@ app.use(bodyParser.json({
 	limit : '100kb'
 }));
 
-// connect to db
-db( λ => {
+// internal middleware
+app.use(middleware());
 
-	// internal middleware
-	app.use(middleware());
+// api router
+app.use('/api', api());
 
-	// api router
-	app.use('/api', api());
+app.server.listen(process.env.PORT || 3000);
 
-	app.server.listen(process.env.PORT || 8080);
-
-	console.log(`Started on port ${app.server.address().port}`);
-});
+console.log(`Started on port ${app.server.address().port}`);
 
 export default app;

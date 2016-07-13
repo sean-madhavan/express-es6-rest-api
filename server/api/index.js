@@ -1,11 +1,23 @@
 import { Router } from 'express';
-import facets from './facets';
+import Vendor from './vendor';
+import Customer from './customer';
 
 export default function() {
-	var api = Router();
+	const api = Router();
 
-	// mount the facets resource
-	api.use('/facets', facets);
+	const vendor = new Vendor();
+	const customer = new Customer();
+
+	// mount controller
+	api.get('/vendor/authorize', vendor.getVendorAuthorizeUrl);
+	api.get('/vendor/auth-success', vendor.vendorAuthSuccess);
+	api.get('/vendor/auth-cancel', vendor.vendorAuthCancel);
+	api.get('/vendor/capture-payment', vendor.capturePayment);
+
+	api.get('/customer/pay', customer.getPaymentUrl);
+	api.get('/customer/auth-success', customer.customerAuthSuccess);
+	api.get('/customer/auth-cancel', customer.customerAuthCancel);
+	api.get('/customer/capture-payment', customer.doExpressCheckout);
 
 	// perhaps expose some API metadata at the root
 	api.get('/', (req, res) => {
